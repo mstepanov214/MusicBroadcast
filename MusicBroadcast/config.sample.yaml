@@ -1,5 +1,5 @@
-﻿TracksUrl: "lastfm tracks url"
+﻿TracksUrl: "https://www.last.fm/tag/YOUR_TAG/tracks"
 
-PagesTotal: 10
+PagesTotal: 200 # 200 max, but some genres have fewer
 
-OutputUrl: "your rtmp url"
+OutputUrl: "rtmp://YOUR_URL"
