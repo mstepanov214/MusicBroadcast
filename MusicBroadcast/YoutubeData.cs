@@ -1,5 +1,4 @@
-﻿
-using Extensions;
+﻿using Extensions;
 
 using MusicBroadcast.Exceptions;
 

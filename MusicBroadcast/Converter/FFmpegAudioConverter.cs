@@ -31,14 +31,6 @@ namespace MusicBroadcast.Converter
             }
 
             conversion
-
-                // ffconcat attempt
-
-                //.AddParameter("-f concat")
-                //.AddParameter("-safe 0")
-                //.AddParameter("-segment_time_metadata 1")
-                //.AddParameter("-protocol_whitelist file,https,http,tcp,tls")
-
                 .AddParameter("-reconnect 1")
                 .AddParameter("-reconnect_streamed 1")
                 .AddParameter("-reconnect_delay_max 5")
@@ -64,10 +56,8 @@ namespace MusicBroadcast.Converter
                 .AddParameter("-flvflags +no_duration_filesize+no_sequence_end")
                 .AddParameter("-shortest")
                 .AddParameter($"-f flv {output}");
-            //.AddParameter($"-f mp4 D:\\Downloads\\test.mp4").SetOverwriteOutput(true);
 
             conversion.OnProgress += OnConversionProgress;
-
 
             //conversion.OnDataReceived += (sender, args) =>
             //{
@@ -85,29 +75,7 @@ namespace MusicBroadcast.Converter
             }
         }
 
-        //const string _inputFile = "concat.txt";
-
         public event EventHandler? ThresholdReached;
-
-
-        //private static void CreateConcatFile(string url)
-        //{
-        //    using (StreamWriter sw = File.CreateText("concat.txt"))
-        //    {
-        //        var concat = String.Join(
-        //            Environment.NewLine,
-        //            "ffconcat version 1.0",
-        //            $"file '{url}'",
-        //            "option reconnect 1",
-        //            "option reconnect_streamed 1",
-        //            "option reconnect_delay_max 5",
-        //            "option safe 0",
-        //            $"file 'concat2.txt'",
-        //            "option segment_time_metadata 1"
-        //        );
-        //        sw.Write(concat);
-        //    }
-        //}
 
         private void OnConversionProgress(object sender, ConversionProgressEventArgs args)
         {

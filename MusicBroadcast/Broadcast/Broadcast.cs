@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-using Extensions;
+﻿using Extensions;
 
 using MusicBroadcast.Converter;
 using MusicBroadcast.Exceptions;

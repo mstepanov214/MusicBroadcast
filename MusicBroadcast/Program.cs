@@ -22,9 +22,9 @@ try
 
     broadcast.Start(source.Token);
 }
-catch (OperationCanceledException) 
+catch (OperationCanceledException)
 {
-    
+
 }
 finally
 {
