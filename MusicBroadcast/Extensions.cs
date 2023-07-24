@@ -1,4 +1,4 @@
-﻿namespace Extensions
+﻿namespace MusicBroadcast.Extensions
 {
     static class Extensions
     {

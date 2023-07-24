@@ -1,39 +1,16 @@
-﻿using Extensions;
-
-using MusicBroadcast.Exceptions;
+﻿using MusicBroadcast.Extensions;
 
 using YoutubeDLSharp;
 using YoutubeDLSharp.Metadata;
 using YoutubeDLSharp.Options;
 
-namespace MusicBroadcast
+namespace MusicBroadcast.Youtube
 {
-    class YoutubeData
+    internal class YoutubeDataProvider : IYoutubeDataProvider
     {
-        // yt-dlp 2023.3.4.0
         static readonly YoutubeDL _ytdl = new();
-        private readonly string _audioUrl;
-        private readonly string _title;
-        private readonly string _url;
-        private readonly TimeSpan? _duration;
 
-        private YoutubeData(VideoData videoData)
-        {
-            _audioUrl = videoData.Formats.First(format => format.FormatId == "140").Url;
-            _title = videoData.Title;
-            _url = videoData.WebpageUrl;
-            _duration = videoData.Duration == null ? null : TimeSpan.FromSeconds((double)videoData.Duration);
-        }
-
-        public string AudioUrl { get => _audioUrl; }
-
-        public string Title { get => _title; }
-
-        public string Url { get => _url; }
-
-        public TimeSpan? Duration => _duration;
-
-        public async static Task<YoutubeData> Load(string url, CancellationToken ct = default)
+        public async Task<YoutubeData> GetYoutubeData(string url, CancellationToken ct = default)
         {
             var options = new OptionSet()
             {
@@ -52,7 +29,7 @@ namespace MusicBroadcast
                 throw new YoutubeCopyrightException(url);
             }
 
-            return new YoutubeData(videoDataFetch.Data);
+            return CreateYoutubeData(videoDataFetch.Data);
         }
 
         private static bool IsCopyrighted(VideoData data)
@@ -71,6 +48,17 @@ namespace MusicBroadcast
                 return true;
             }
             return data.Tags.Contains("vevo", StringComparer.OrdinalIgnoreCase);
+        }
+
+        private static YoutubeData CreateYoutubeData(VideoData videoData)
+        {
+            return new YoutubeData()
+            {
+                AudioUrl = videoData.Formats.First(format => format.FormatId == "140").Url,
+                Title = videoData.Title,
+                Url = videoData.WebpageUrl,
+                Duration = videoData.Duration == null ? null : TimeSpan.FromSeconds((double)videoData.Duration)
+            };
         }
     }
 }

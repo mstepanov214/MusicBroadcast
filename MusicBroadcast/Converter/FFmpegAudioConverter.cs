@@ -1,11 +1,9 @@
-﻿using MusicBroadcast.Exceptions;
-
-using Xabe.FFmpeg;
+﻿using Xabe.FFmpeg;
 using Xabe.FFmpeg.Events;
 
 namespace MusicBroadcast.Converter
 {
-    class FFmpegAudioConverter : IConverter
+    internal class FFmpegAudioConverter : IConverter
     {
 
         private bool _thresholdEventInvoked = false;

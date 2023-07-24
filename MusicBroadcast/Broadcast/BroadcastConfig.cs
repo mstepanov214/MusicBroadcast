@@ -2,7 +2,7 @@
 
 namespace MusicBroadcast
 {
-    public class BroadcastConfig : IBroadcastConfig
+    internal class BroadcastConfig : IBroadcastConfig
     {
         public required string OutputUrl { get; init; }
 

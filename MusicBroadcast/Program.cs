@@ -1,6 +1,6 @@
-﻿using MusicBroadcast;
-using MusicBroadcast.Converter;
-using MusicBroadcast.Parser;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+using MusicBroadcast;
 
 CancellationTokenSource source = new();
 
@@ -12,13 +12,7 @@ Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs args) =>
 
 try
 {
-    var config = BroadcastConfig.FromYaml("config.yaml");
-
-    var broadcast = new Broadcast(
-        config,
-        new LastfmParser(),
-        new FFmpegAudioConverter()
-    );
+    var broadcast = ServiceRegistry.Provider.GetRequiredService<Broadcast>();
 
     broadcast.Start(source.Token);
 }

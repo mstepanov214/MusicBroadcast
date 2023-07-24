@@ -1,12 +1,5 @@
-﻿namespace MusicBroadcast.Exceptions
+﻿namespace MusicBroadcast.Youtube
 {
-    class BroadcastException : Exception
-    {
-        public BroadcastException(Exception inner) : base("Broadcast exception", inner) { }
-
-        public BroadcastException(String message) : base(message) { }
-    }
-
     abstract class YoutubeException : Exception
     {
         protected YoutubeException(string message) : base(message) { }

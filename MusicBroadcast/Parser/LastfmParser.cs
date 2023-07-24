@@ -3,13 +3,13 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Io;
 
-using Extensions;
+using MusicBroadcast.Extensions;
 
 using RandomUserAgent;
 
 namespace MusicBroadcast.Parser
 {
-    class LastfmParser : IParser<string[]>
+    internal class LastfmParser : IParser<string[]>
     {
         private readonly IBrowsingContext _browsingContext;
 
