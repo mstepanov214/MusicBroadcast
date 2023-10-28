@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+**/out/
+
+Dockerfile*
+**/*.md
+bg.jpg
+config.yaml
