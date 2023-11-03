@@ -5,13 +5,8 @@ namespace MusicBroadcast.Converter
 {
     internal class FFmpegAudioConverter : IConverter
     {
-
-        private bool _thresholdEventInvoked = false;
-
         public async Task Convert(string input, string output, CancellationToken ct)
         {
-            _thresholdEventInvoked = false;
-
             var conversion = FFmpeg.Conversions.New().AddParameter("-hide_banner").AddParameter("-re");
 
             if (File.Exists("bg.jpg"))
@@ -73,15 +68,8 @@ namespace MusicBroadcast.Converter
             }
         }
 
-        public event EventHandler? ThresholdReached;
-
         private void OnConversionProgress(object sender, ConversionProgressEventArgs args)
         {
-            if (args.Percent >= 95 && !_thresholdEventInvoked)
-            {
-                ThresholdReached?.Invoke(this, EventArgs.Empty);
-                _thresholdEventInvoked = true;
-            }
             ClearCurrentConsoleLine();
             Console.WriteLine($"[{args.Duration} / {args.TotalLength}] {args.Percent}%");
             Console.SetCursorPosition(0, Console.CursorTop - 1);

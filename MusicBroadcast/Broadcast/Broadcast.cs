@@ -22,23 +22,17 @@ namespace MusicBroadcast
             _youtubeDataProvider = youtubeDataProvider;
         }
 
-        public void Start(CancellationToken ct = default)
+        public async Task Start(CancellationToken ct = default)
         {
             _ct = ct;
-            string? nextAudioUrl;
-
-            _converter.ThresholdReached += async (object? sender, EventArgs e) =>
-            {
-                nextAudioUrl = await FetchNextAudioUrl();
-            };
-
-            nextAudioUrl = FetchNextAudioUrl().GetAwaiter().GetResult();
+            string? audioUrl;
 
             while (!_ct.IsCancellationRequested)
             {
                 try
                 {
-                    _converter.Convert(nextAudioUrl, _config.OutputUrl, _ct).GetAwaiter().GetResult();
+                    audioUrl = await FetchNextAudioUrl();
+                    await _converter.Convert(audioUrl, _config.OutputUrl, _ct);
                 }
                 catch (BroadcastException e)
                 {
@@ -68,7 +62,8 @@ namespace MusicBroadcast
 
         private async Task<YoutubeData> FetchRandomTrackData()
         {
-            string tracksUrl = _config.TracksUrl + $"?page={new Random().Next(1, _config.PagesTotal + 1)}";
+            int randomPage = new Random().Next(1, _config.PagesTotal + 1);
+            string tracksUrl = _config.TracksUrl + $"?page={randomPage}";
             string youtubeUrl = (await _parser.Parse(tracksUrl)).GetRandomElement();
 
             return await _youtubeDataProvider.GetYoutubeData(youtubeUrl, _ct);
