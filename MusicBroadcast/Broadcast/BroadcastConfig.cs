@@ -10,9 +10,6 @@ namespace MusicBroadcast
 
         public required int PagesTotal { get; init; }
 
-        // wtf, private used to work
-        public BroadcastConfig() { }
-
         public static BroadcastConfig FromYaml(string path)
         {
             IConfiguration configuration = new ConfigurationBuilder()
