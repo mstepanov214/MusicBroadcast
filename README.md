@@ -1,11 +1,11 @@
 ## MusicBroadcast
 
-Test implementation of infinite music broadcast.
+Goal: endless music broadcast without pre-saved audio playlist.
 
 ### Prerequisites
 
 - ffmpeg 5.1.2+
-- yt-dlp 2023.3.4.0+
+- yt-dlp 2023.07.06+
 
 ### Known issues
 
