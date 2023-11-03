@@ -14,7 +14,7 @@ try
 {
     var broadcast = ServiceRegistry.Provider.GetRequiredService<Broadcast>();
 
-    broadcast.Start(source.Token);
+    await broadcast.Start(source.Token);
 }
 catch (OperationCanceledException)
 {
