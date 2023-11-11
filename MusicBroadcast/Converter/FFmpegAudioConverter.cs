@@ -5,6 +5,18 @@ namespace MusicBroadcast.Converter
 {
     internal class FFmpegAudioConverter : IConverter
     {
+        private readonly bool _displayProgress = true;
+
+        public FFmpegAudioConverter()
+        {
+            var args = Environment.GetCommandLineArgs();
+
+            if (args.ElementAtOrDefault(1) == "--hide-progress")
+            {
+                _displayProgress = false;
+            }
+        }
+
         public async Task Convert(string input, string output, CancellationToken ct)
         {
             var conversion = FFmpeg.Conversions.New().AddParameter("-hide_banner").AddParameter("-re");
@@ -29,7 +41,6 @@ namespace MusicBroadcast.Converter
                 .AddParameter("-reconnect_delay_max 5")
                 .AddParameter("-fflags +discardcorrupt+igndts")
                 .AddParameter($"-i {input}")
-
                 .AddParameter("-map 0:v")
                 .AddParameter("-map 1:a")
                 .AddParameter("-ar 44100")
@@ -50,7 +61,10 @@ namespace MusicBroadcast.Converter
                 .AddParameter("-shortest")
                 .AddParameter($"-f flv {output}");
 
-            conversion.OnProgress += OnConversionProgress;
+            if (_displayProgress)
+            {
+                conversion.OnProgress += OnConversionProgress;
+            }
 
             //conversion.OnDataReceived += (sender, args) =>
             //{
@@ -68,7 +82,7 @@ namespace MusicBroadcast.Converter
             }
         }
 
-        private void OnConversionProgress(object sender, ConversionProgressEventArgs args)
+        private static void OnConversionProgress(object sender, ConversionProgressEventArgs args)
         {
             ClearCurrentConsoleLine();
             Console.WriteLine($"[{args.Duration} / {args.TotalLength}] {args.Percent}%");

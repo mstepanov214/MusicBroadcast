@@ -16,4 +16,4 @@ FROM mcr.microsoft.com/dotnet/runtime:7.0-alpine3.18
 WORKDIR /app
 COPY --from=build /out .
 RUN apk add --no-cache ffmpeg=6.0-r15 yt-dlp-core=2023.07.06-r1
-ENTRYPOINT ["./MusicBroadcast"]
+ENTRYPOINT ["./MusicBroadcast", "--hide-progress"]
