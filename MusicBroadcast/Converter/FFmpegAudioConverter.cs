@@ -5,16 +5,11 @@ namespace MusicBroadcast.Converter
 {
     internal class FFmpegAudioConverter : IConverter
     {
-        private readonly bool _displayProgress = true;
+        private readonly StartupOptions _startupOptions;
 
-        public FFmpegAudioConverter()
+        public FFmpegAudioConverter(StartupOptions startupOptions)
         {
-            var args = Environment.GetCommandLineArgs();
-
-            if (args.ElementAtOrDefault(1) == "--hide-progress")
-            {
-                _displayProgress = false;
-            }
+            _startupOptions = startupOptions;
         }
 
         public async Task Convert(string input, string output, CancellationToken ct)
@@ -61,7 +56,7 @@ namespace MusicBroadcast.Converter
                 .AddParameter("-shortest")
                 .AddParameter($"-f flv {output}");
 
-            if (_displayProgress)
+            if (!_startupOptions.HideProgress)
             {
                 conversion.OnProgress += OnConversionProgress;
             }
