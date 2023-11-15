@@ -8,13 +8,11 @@ internal class RandomAudioProvider : IAudioSourceProvider
 {
     private readonly IBroadcastConfig _config;
     private readonly IParser<string[]> _parser;
-    private readonly IYoutubeDataProvider _youtubeDataProvider;
 
-    public RandomAudioProvider(IBroadcastConfig config, IParser<string[]> parser, IYoutubeDataProvider youtubeDataProvider)
+    public RandomAudioProvider(IBroadcastConfig config, IParser<string[]> parser)
     {
         _config = config;
         _parser = parser;
-        _youtubeDataProvider = youtubeDataProvider;
     }
 
     public async Task<string> GetNext()
@@ -42,6 +40,6 @@ internal class RandomAudioProvider : IAudioSourceProvider
         string tracksUrl = _config.TracksUrl + $"?page={randomPage}";
         string youtubeUrl = (await _parser.Parse(tracksUrl)).GetRandomElement();
 
-        return await _youtubeDataProvider.GetYoutubeData(youtubeUrl);
+        return await YoutubeDataClient.GetYoutubeData(youtubeUrl);
     }
 }

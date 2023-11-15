@@ -6,11 +6,11 @@ using YoutubeDLSharp.Options;
 
 namespace MusicBroadcast.Youtube;
 
-internal class YoutubeDataProvider : IYoutubeDataProvider
+internal static class YoutubeDataClient
 {
     static readonly YoutubeDL _ytdl = new();
 
-    public async Task<YoutubeData> GetYoutubeData(string url, CancellationToken ct = default)
+    public static async Task<YoutubeData> GetYoutubeData(string url, CancellationToken ct = default)
     {
         var options = new OptionSet()
         {

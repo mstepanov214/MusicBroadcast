@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using MusicBroadcast.Converter;
 using MusicBroadcast.Parser;
-using MusicBroadcast.Youtube;
 
 namespace MusicBroadcast;
 
@@ -22,7 +21,6 @@ static class ServiceRegistry
         serviceCollection.AddScoped<IParser<string[]>, LastfmParser>();
         serviceCollection.AddSingleton<IAudioSourceProvider, RandomAudioProvider>();
         serviceCollection.AddSingleton<IConverter, FFmpegAudioConverter>();
-        serviceCollection.AddSingleton<IYoutubeDataProvider, YoutubeDataProvider>();
         serviceCollection.AddSingleton<Broadcast>();
 
         Provider = serviceCollection.BuildServiceProvider();
