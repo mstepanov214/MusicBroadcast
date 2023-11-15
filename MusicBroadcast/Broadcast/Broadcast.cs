@@ -1,38 +1,37 @@
 ﻿using MusicBroadcast.Converter;
 
-namespace MusicBroadcast
+namespace MusicBroadcast;
+
+class Broadcast
 {
-    class Broadcast
+    private readonly IBroadcastConfig _config;
+    private readonly IConverter _converter;
+    private readonly IAudioSourceProvider _randomAudioProvider;
+
+    private CancellationToken _ct;
+
+    public Broadcast(IBroadcastConfig config, IConverter converter, IAudioSourceProvider randomAudioProvider)
     {
-        private readonly IBroadcastConfig _config;
-        private readonly IConverter _converter;
-        private readonly IAudioSourceProvider _randomAudioProvider;
+        _config = config;
+        _converter = converter;
+        _randomAudioProvider = randomAudioProvider;
+    }
 
-        private CancellationToken _ct;
+    public async Task Start(CancellationToken ct = default)
+    {
+        _ct = ct;
+        string? audioUrl;
 
-        public Broadcast(IBroadcastConfig config, IConverter converter, IAudioSourceProvider randomAudioProvider)
+        while (!_ct.IsCancellationRequested)
         {
-            _config = config;
-            _converter = converter;
-            _randomAudioProvider = randomAudioProvider;
-        }
-
-        public async Task Start(CancellationToken ct = default)
-        {
-            _ct = ct;
-            string? audioUrl;
-
-            while (!_ct.IsCancellationRequested)
+            try
             {
-                try
-                {
-                    audioUrl = await _randomAudioProvider.GetNext();
-                    await _converter.Convert(audioUrl, _config.OutputUrl, _ct);
-                }
-                catch (BroadcastException e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
+                audioUrl = await _randomAudioProvider.GetNext();
+                await _converter.Convert(audioUrl, _config.OutputUrl, _ct);
+            }
+            catch (BroadcastException e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
     }

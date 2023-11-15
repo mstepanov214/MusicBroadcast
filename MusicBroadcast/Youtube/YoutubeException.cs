@@ -1,17 +1,16 @@
-﻿namespace MusicBroadcast.Youtube
+﻿namespace MusicBroadcast.Youtube;
+
+abstract class YoutubeException : Exception
 {
-    abstract class YoutubeException : Exception
-    {
-        protected YoutubeException(string message) : base(message) { }
-    }
+    protected YoutubeException(string message) : base(message) { }
+}
 
-    class YoutubeUnavailableException : YoutubeException
-    {
-        public YoutubeUnavailableException(string url) : base($"{url} is unavailable") { }
-    }
+class YoutubeUnavailableException : YoutubeException
+{
+    public YoutubeUnavailableException(string url) : base($"{url} is unavailable") { }
+}
 
-    class YoutubeCopyrightException : YoutubeException
-    {
-        public YoutubeCopyrightException(string url) : base($"{url} is copyrighted") { }
-    }
+class YoutubeCopyrightException : YoutubeException
+{
+    public YoutubeCopyrightException(string url) : base($"{url} is copyrighted") { }
 }

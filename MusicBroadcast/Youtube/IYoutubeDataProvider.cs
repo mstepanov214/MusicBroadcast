@@ -1,7 +1,6 @@
-﻿namespace MusicBroadcast.Youtube
+﻿namespace MusicBroadcast.Youtube;
+
+interface IYoutubeDataProvider
 {
-    interface IYoutubeDataProvider
-    {
-        public Task<YoutubeData> GetYoutubeData(string url, CancellationToken ct = default);
-    }
+    public Task<YoutubeData> GetYoutubeData(string url, CancellationToken ct = default);
 }

@@ -1,7 +1,6 @@
-﻿namespace MusicBroadcast.Parser
+﻿namespace MusicBroadcast.Parser;
+
+interface IParser<T> where T : class
 {
-    interface IParser<T> where T : class
-    {
-        Task<T> Parse(string address);
-    }
+    Task<T> Parse(string address);
 }

@@ -7,34 +7,33 @@ using MusicBroadcast.Converter;
 using MusicBroadcast.Parser;
 using MusicBroadcast.Youtube;
 
-namespace MusicBroadcast
+namespace MusicBroadcast;
+
+static class ServiceRegistry
 {
-    static class ServiceRegistry
+    public static IServiceProvider Provider { get; }
+
+    static ServiceRegistry()
     {
-        public static IServiceProvider Provider { get; }
+        var serviceCollection = new ServiceCollection();
 
-        static ServiceRegistry()
-        {
-            var serviceCollection = new ServiceCollection();
+        serviceCollection.AddSingleton(ParseStartupOptions());
+        serviceCollection.AddSingleton<IBroadcastConfig>(BroadcastConfig.FromYaml("config.yaml"));
+        serviceCollection.AddScoped<IParser<string[]>, LastfmParser>();
+        serviceCollection.AddSingleton<IAudioSourceProvider, RandomAudioProvider>();
+        serviceCollection.AddSingleton<IConverter, FFmpegAudioConverter>();
+        serviceCollection.AddSingleton<IYoutubeDataProvider, YoutubeDataProvider>();
+        serviceCollection.AddSingleton<Broadcast>();
 
-            serviceCollection.AddSingleton(ParseStartupOptions());
-            serviceCollection.AddSingleton<IBroadcastConfig>(BroadcastConfig.FromYaml("config.yaml"));
-            serviceCollection.AddScoped<IParser<string[]>, LastfmParser>();
-            serviceCollection.AddSingleton<IAudioSourceProvider, RandomAudioProvider>();
-            serviceCollection.AddSingleton<IConverter, FFmpegAudioConverter>();
-            serviceCollection.AddSingleton<IYoutubeDataProvider, YoutubeDataProvider>();
-            serviceCollection.AddSingleton<Broadcast>();
+        Provider = serviceCollection.BuildServiceProvider();
+    }
 
-            Provider = serviceCollection.BuildServiceProvider();
-        }
-
-        private static StartupOptions ParseStartupOptions()
-        {
-            var args = Environment.GetCommandLineArgs().Skip(1);
-            return CommandLine.Parser.Default
-                .ParseArguments<StartupOptions>(args)
-                .WithNotParsed(_ => System.Environment.Exit(1))
-                .Value;
-        }
+    private static StartupOptions ParseStartupOptions()
+    {
+        var args = Environment.GetCommandLineArgs().Skip(1);
+        return CommandLine.Parser.Default
+            .ParseArguments<StartupOptions>(args)
+            .WithNotParsed(_ => System.Environment.Exit(1))
+            .Value;
     }
 }

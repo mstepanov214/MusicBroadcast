@@ -1,7 +1,6 @@
-﻿namespace MusicBroadcast.Converter
+﻿namespace MusicBroadcast.Converter;
+
+interface IConverter
 {
-    interface IConverter
-    {
-        Task Convert(string input, string output, CancellationToken ct = default);
-    }
+    Task Convert(string input, string output, CancellationToken ct = default);
 }

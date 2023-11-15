@@ -1,29 +1,28 @@
-﻿namespace MusicBroadcast.Extensions
+﻿namespace MusicBroadcast.Extensions;
+
+static class Extensions
 {
-    static class Extensions
+    public static bool IsAscii(this string str)
     {
-        public static bool IsAscii(this string str)
-        {
-            return str.All(c => c >= ' ' && c <= '~');
-        }
+        return str.All(c => c >= ' ' && c <= '~');
+    }
 
-        public static T GetRandomElement<T>(this IEnumerable<T> enumerable)
+    public static T GetRandomElement<T>(this IEnumerable<T> enumerable)
+    {
+        if (!enumerable.Any())
         {
-            if (!enumerable.Any())
-            {
-                throw new ArgumentException("Collection is empty");
-            }
-            return enumerable.ElementAt(new Random().Next(enumerable.Count()));
+            throw new ArgumentException("Collection is empty");
         }
+        return enumerable.ElementAt(new Random().Next(enumerable.Count()));
+    }
 
-        public static bool IsEmpty(this string str)
-        {
-            return string.IsNullOrEmpty(str);
-        }
+    public static bool IsEmpty(this string str)
+    {
+        return string.IsNullOrEmpty(str);
+    }
 
-        public static bool IsNotEmpty(this string str)
-        {
-            return !IsEmpty(str);
-        }
+    public static bool IsNotEmpty(this string str)
+    {
+        return !IsEmpty(str);
     }
 }
