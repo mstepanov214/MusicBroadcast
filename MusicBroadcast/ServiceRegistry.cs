@@ -20,6 +20,7 @@ namespace MusicBroadcast
             serviceCollection.AddSingleton(ParseStartupOptions());
             serviceCollection.AddSingleton<IBroadcastConfig>(BroadcastConfig.FromYaml("config.yaml"));
             serviceCollection.AddScoped<IParser<string[]>, LastfmParser>();
+            serviceCollection.AddSingleton<IAudioSourceProvider, RandomAudioProvider>();
             serviceCollection.AddSingleton<IConverter, FFmpegAudioConverter>();
             serviceCollection.AddSingleton<IYoutubeDataProvider, YoutubeDataProvider>();
             serviceCollection.AddSingleton<Broadcast>();
