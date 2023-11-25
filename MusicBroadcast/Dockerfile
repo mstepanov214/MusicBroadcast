@@ -13,7 +13,15 @@ RUN dotnet publish -o /out \
     #/p:PublishTrimmed=true \
 
 FROM mcr.microsoft.com/dotnet/runtime:7.0-alpine3.18
+
+RUN adduser --disabled-password \
+    --home /app \
+    --gecos '' dotnetuser && chown -R dotnetuser /app
+
+RUN apk add --no-cache ffmpeg yt-dlp-core
+
+USER dotnetuser
 WORKDIR /app
 COPY --from=build /out .
-RUN apk add --no-cache ffmpeg=6.0-r15 yt-dlp-core=2023.07.06-r1
+
 ENTRYPOINT ["./MusicBroadcast", "--hide-progress"]
