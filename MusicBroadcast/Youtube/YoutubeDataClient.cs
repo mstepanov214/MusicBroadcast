@@ -36,18 +36,15 @@ internal static class YoutubeDataClient
     {
         if (data.License.IsNotEmpty()) return true;
 
-        var fields = new string[]{
+        string[] fields = {
             data.Uploader,
             data.UploaderUrl,
             data.UploaderID,
             data.Channel,
             data.Description,
+            string.Join(' ', data.Tags)
         };
-        if (fields.Any(field => field.Contains("vevo", StringComparison.OrdinalIgnoreCase)))
-        {
-            return true;
-        }
-        return data.Tags.Contains("vevo", StringComparer.OrdinalIgnoreCase);
+        return fields.Any(field => field.Contains("vevo", StringComparison.OrdinalIgnoreCase));
     }
 
     private static YoutubeData CreateYoutubeData(VideoData videoData)
