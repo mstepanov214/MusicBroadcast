@@ -4,7 +4,7 @@ using MusicBroadcast.Youtube;
 
 namespace MusicBroadcast;
 
-internal class RandomAudioProvider : IAudioSourceProvider
+internal class RandomAudioProvider : IAudioProvider
 {
     private readonly IBroadcastConfig _config;
     private readonly IParser<string[]> _parser;
@@ -15,7 +15,16 @@ internal class RandomAudioProvider : IAudioSourceProvider
         _parser = parser;
     }
 
-    public async Task<string> GetNext()
+    public async IAsyncEnumerable<string> GetDataAsync()
+    {
+        while (true)
+        {
+            string audioUrl = await FetchValidAudioUrl();
+            yield return audioUrl;
+        }
+    }
+
+    private async Task<string> FetchValidAudioUrl()
     {
         YoutubeData? youtubeData = null;
         do

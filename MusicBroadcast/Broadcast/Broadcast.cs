@@ -6,11 +6,9 @@ class Broadcast
 {
     private readonly IBroadcastConfig _config;
     private readonly IConverter _converter;
-    private readonly IAudioSourceProvider _randomAudioProvider;
+    private readonly IAudioProvider _randomAudioProvider;
 
-    private CancellationToken _ct;
-
-    public Broadcast(IBroadcastConfig config, IConverter converter, IAudioSourceProvider randomAudioProvider)
+    public Broadcast(IBroadcastConfig config, IConverter converter, IAudioProvider randomAudioProvider)
     {
         _config = config;
         _converter = converter;
@@ -19,15 +17,11 @@ class Broadcast
 
     public async Task Start(CancellationToken ct = default)
     {
-        _ct = ct;
-        string? audioUrl;
-
-        while (!_ct.IsCancellationRequested)
+        await foreach (var audioUrl in _randomAudioProvider.GetDataAsync())
         {
             try
             {
-                audioUrl = await _randomAudioProvider.GetNext();
-                await _converter.Convert(audioUrl, _config.OutputUrl, _ct);
+                await _converter.Convert(audioUrl, _config.OutputUrl, ct);
             }
             catch (BroadcastException e)
             {
