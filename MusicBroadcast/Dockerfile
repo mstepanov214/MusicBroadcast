@@ -16,9 +16,15 @@ FROM mcr.microsoft.com/dotnet/runtime:9.0-alpine
 
 RUN adduser --disabled-password \
     --home /app \
-    --gecos '' dotnetuser && chown -R dotnetuser /app
+    --gecos '' dotnetuser && \
+    chown -R dotnetuser /app
 
-RUN apk add --no-cache ffmpeg yt-dlp-core
+RUN apk add --no-cache ffmpeg && \
+    mkdir /app/bin && \
+    wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux -O /app/bin/yt-dlp && \
+    chmod a+rx /app/bin/yt-dlp
+
+ENV PATH="$PATH:/app/bin"
 
 USER dotnetuser
 WORKDIR /app
