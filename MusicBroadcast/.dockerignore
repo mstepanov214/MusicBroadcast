@@ -6,3 +6,4 @@ Dockerfile*
 **/*.md
 bg.jpg
 config.yaml
+cookies.txt
