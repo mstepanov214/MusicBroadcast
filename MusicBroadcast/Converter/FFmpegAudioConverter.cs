@@ -12,7 +12,7 @@ internal class FFmpegAudioConverter : IConverter
         _startupOptions = startupOptions;
     }
 
-    public Task Convert(string input, string output, CancellationToken ct)
+    public async Task Convert(string input, string output, CancellationToken ct)
     {
         var conversion = FFmpeg.Conversions.New().AddParameter("-hide_banner").AddParameter("-re");
 
@@ -68,7 +68,7 @@ internal class FFmpegAudioConverter : IConverter
 
         try
         {
-            return conversion.Start(ct);
+            await conversion.Start(ct);
         }
         catch (Xabe.FFmpeg.Exceptions.ConversionException e)
         {

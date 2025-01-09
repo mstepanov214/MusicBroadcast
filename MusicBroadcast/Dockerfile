@@ -1,18 +1,18 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine3.18 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 WORKDIR /source
 
 COPY *.csproj .
-RUN dotnet restore --runtime alpine-x64
+RUN dotnet restore --runtime linux-musl-x64
 
 COPY . .
 RUN dotnet publish -o /out \
     --no-restore \
-    --runtime alpine-x64 \
+    --runtime linux-musl-x64 \
     --self-contained true \
-    /p:PublishSingleFile=true 
+    /p:PublishSingleFile=true
     #/p:PublishTrimmed=true \
 
-FROM mcr.microsoft.com/dotnet/runtime:7.0-alpine3.18
+FROM mcr.microsoft.com/dotnet/runtime:9.0-alpine
 
 RUN adduser --disabled-password \
     --home /app \
