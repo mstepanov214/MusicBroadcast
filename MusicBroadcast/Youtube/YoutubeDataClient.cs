@@ -28,7 +28,8 @@ internal static class YoutubeDataClient
 
         if (!videoDataFetch.Success)
         {
-            throw new YoutubeUnavailableException(url);
+            string error = string.Join(Environment.NewLine, videoDataFetch.ErrorOutput);
+            throw new YoutubeUnavailableException(url, error);
         }
 
         if (IsCopyrighted(videoDataFetch.Data))
@@ -56,9 +57,13 @@ internal static class YoutubeDataClient
 
     private static YoutubeData CreateYoutubeData(VideoData videoData)
     {
+        var formatData = videoData.Formats.FirstOrDefault(
+            data => data.FormatId == "140",
+            defaultValue: videoData.Formats[0]);
+
         return new YoutubeData()
         {
-            AudioUrl = videoData.Formats.First(format => format.FormatId == "140").Url,
+            AudioUrl = formatData.Url,
             Title = videoData.Title,
             Url = videoData.WebpageUrl,
             Duration = videoData.Duration == null ? null : TimeSpan.FromSeconds((double)videoData.Duration)

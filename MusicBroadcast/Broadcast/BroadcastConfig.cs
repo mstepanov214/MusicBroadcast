@@ -13,8 +13,8 @@ internal class BroadcastConfig : IBroadcastConfig
     public static BroadcastConfig FromYaml(string path)
     {
         IConfiguration configuration = new ConfigurationBuilder()
-         .AddYamlFile(path)
-         .Build();
+            .AddYamlFile(path)
+            .Build();
 
         var broadcastConfig = configuration.Get<BroadcastConfig>((binderOptions) => binderOptions.ErrorOnUnknownConfiguration = true)!;
 
