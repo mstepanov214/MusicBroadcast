@@ -1,4 +1,6 @@
-﻿namespace MusicBroadcast.Extensions;
+﻿using System.Web;
+
+namespace MusicBroadcast.Extensions;
 
 static class Extensions
 {
@@ -11,18 +13,18 @@ static class Extensions
     {
         if (!enumerable.Any())
         {
-            throw new ArgumentException("Collection is empty");
+            throw new InvalidOperationException("Sequence contains no elements");
         }
         return enumerable.ElementAt(new Random().Next(enumerable.Count()));
     }
 
-    public static bool IsEmpty(this string str)
+    public static Uri AddParameter(this Uri url, string paramName, string paramValue)
     {
-        return string.IsNullOrEmpty(str);
-    }
+        var uriBuilder = new UriBuilder(url);
+        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+        query[paramName] = paramValue;
+        uriBuilder.Query = query.ToString();
 
-    public static bool IsNotEmpty(this string str)
-    {
-        return !IsEmpty(str);
+        return uriBuilder.Uri;
     }
 }

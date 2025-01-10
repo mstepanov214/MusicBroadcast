@@ -8,8 +8,6 @@ internal class BroadcastConfig : IBroadcastConfig
 
     public required string TracksUrl { get; init; }
 
-    public required int PagesTotal { get; init; }
-
     public static BroadcastConfig FromYaml(string path)
     {
         IConfiguration configuration = new ConfigurationBuilder()

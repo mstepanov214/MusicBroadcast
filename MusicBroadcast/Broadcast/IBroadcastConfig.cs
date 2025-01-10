@@ -11,9 +11,4 @@ interface IBroadcastConfig
     /// Url to parse tracks data from
     /// </summary>
     string TracksUrl { get; }
-
-    /// <summary>
-    /// Pagination total
-    /// </summary>
-    int PagesTotal { get; }
 }

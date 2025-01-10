@@ -7,9 +7,10 @@ namespace MusicBroadcast;
 internal class RandomAudioProvider : IAudioProvider
 {
     private readonly IBroadcastConfig _config;
-    private readonly IParser<string[]> _parser;
+    private readonly IParser<LastfmParseResult> _parser;
+    private int _pagesTotal = 1;
 
-    public RandomAudioProvider(IBroadcastConfig config, IParser<string[]> parser)
+    public RandomAudioProvider(IBroadcastConfig config, IParser<LastfmParseResult> parser)
     {
         _config = config;
         _parser = parser;
@@ -45,10 +46,21 @@ internal class RandomAudioProvider : IAudioProvider
 
     private async Task<YoutubeData> GetRandomTrackData()
     {
-        int randomPage = new Random().Next(1, _config.PagesTotal + 1);
-        string tracksUrl = _config.TracksUrl + $"?page={randomPage}";
-        string youtubeUrl = (await _parser.Parse(tracksUrl)).GetRandomElement();
+        string tracksUrl = GetTracksUrl();
+        var result = await _parser.Parse(tracksUrl);
+
+        string youtubeUrl = result.Urls.GetRandomElement();
+        _pagesTotal = result.PagesTotal;
 
         return await YoutubeDataClient.GetYoutubeData(youtubeUrl);
+    }
+
+    private string GetTracksUrl()
+    {
+        var uri = new Uri(_config.TracksUrl);
+        if (!uri.IsWellFormedOriginalString()) throw new ArgumentException("TracksUrl is invalid.");
+
+        int pageNumber = new Random().Next(1, _pagesTotal + 1);
+        return uri.AddParameter("page", pageNumber.ToString()).ToString();
     }
 }

@@ -9,7 +9,7 @@ using RandomUserAgent;
 
 namespace MusicBroadcast.Parser;
 
-internal class LastfmParser : IParser<string[]>
+internal class LastfmParser : IParser<LastfmParseResult>
 {
     private readonly IBrowsingContext _browsingContext;
 
@@ -28,11 +28,13 @@ internal class LastfmParser : IParser<string[]>
         _browsingContext = BrowsingContext.New(Configuration.Default.With(requester).WithDefaultLoader(loaderOptions));
     }
 
-    public async Task<string[]> Parse(string address)
+    public async Task<LastfmParseResult> Parse(string address)
     {
         var document = await _browsingContext.OpenAsync(address);
 
         await document.WaitForReadyAsync();
+
+        string pagesTotal = document.QuerySelectorAll(".pagination-page").Last().Text().Trim();
 
         var rows = document.QuerySelectorAll("tr.chartlist-row");
 
@@ -53,6 +55,10 @@ internal class LastfmParser : IParser<string[]>
                 }
             }
         }
-        return youtubeUrls.ToArray();
+        return new LastfmParseResult()
+        {
+            Urls = youtubeUrls,
+            PagesTotal = int.Parse(pagesTotal)
+        };
     }
 }

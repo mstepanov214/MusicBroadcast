@@ -18,7 +18,7 @@ static class ServiceRegistry
 
         serviceCollection.AddSingleton(ParseStartupOptions());
         serviceCollection.AddSingleton<IBroadcastConfig>(BroadcastConfig.FromYaml("config.yaml"));
-        serviceCollection.AddScoped<IParser<string[]>, LastfmParser>();
+        serviceCollection.AddScoped<IParser<LastfmParseResult>, LastfmParser>();
         serviceCollection.AddSingleton<IAudioProvider, RandomAudioProvider>();
         serviceCollection.AddSingleton<IConverter, FFmpegAudioConverter>();
         serviceCollection.AddSingleton<Broadcast>();
