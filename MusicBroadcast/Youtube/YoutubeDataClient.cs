@@ -42,16 +42,16 @@ internal static class YoutubeDataClient
 
     private static bool IsCopyrighted(VideoData data)
     {
-        if (data.License.IsNotEmpty()) return true;
+        if (!string.IsNullOrEmpty(data.License)) return true;
 
-        var fields = new[]{
+        string[] fields = [
             data.Uploader,
             data.UploaderUrl,
             data.UploaderID,
             data.Channel,
             data.Description,
-            string.Join(' ', data.Tags)
-        };
+            ..data.Tags
+        ];
         return fields.Any(field => field?.Contains("vevo", StringComparison.OrdinalIgnoreCase) ?? false);
     }
 

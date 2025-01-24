@@ -1,4 +1,4 @@
-﻿namespace MusicBroadcast;
+﻿namespace MusicBroadcast.Youtube;
 
 class YoutubeData
 {

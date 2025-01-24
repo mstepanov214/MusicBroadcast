@@ -20,19 +20,21 @@ internal class RandomAudioProvider : IAudioProvider
     {
         while (true)
         {
-            string audioUrl = await FetchValidAudioUrl();
-            yield return audioUrl;
+            var youtubeData = await FetchValidYoutubeData();
+            Console.WriteLine($"{youtubeData.Title} ({youtubeData.Url})");
+
+            yield return youtubeData.AudioUrl;
         }
     }
 
-    private async Task<string> FetchValidAudioUrl()
+    private async Task<YoutubeData> FetchValidYoutubeData()
     {
         YoutubeData? youtubeData = null;
         do
         {
             try
             {
-                youtubeData = await GetRandomTrackData();
+                youtubeData = await GetRandomTrackYoutubeData();
             }
             catch (YoutubeException e)
             {
@@ -40,11 +42,10 @@ internal class RandomAudioProvider : IAudioProvider
             }
         } while (youtubeData == null);
 
-        Console.WriteLine($"{youtubeData.Title} ({youtubeData.Url})");
-        return youtubeData.AudioUrl;
+        return youtubeData;
     }
 
-    private async Task<YoutubeData> GetRandomTrackData()
+    private async Task<YoutubeData> GetRandomTrackYoutubeData()
     {
         string tracksUrl = GetTracksUrl();
         var result = await _parser.Parse(tracksUrl);
@@ -58,7 +59,10 @@ internal class RandomAudioProvider : IAudioProvider
     private string GetTracksUrl()
     {
         var uri = new Uri(_config.TracksUrl);
-        if (!uri.IsWellFormedOriginalString()) throw new ArgumentException("TracksUrl is invalid.");
+        if (!uri.IsWellFormedOriginalString())
+        {
+            throw new ArgumentException($"TracksUrl is not valid: {_config.TracksUrl}");
+        }
 
         int pageNumber = new Random().Next(1, _pagesTotal + 1);
         return uri.AddParameter("page", pageNumber.ToString()).ToString();
