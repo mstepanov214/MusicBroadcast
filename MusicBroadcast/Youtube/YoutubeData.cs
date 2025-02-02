@@ -1,12 +1,26 @@
-﻿namespace MusicBroadcast.Youtube;
+﻿using YoutubeDLSharp.Metadata;
 
-class YoutubeData
+namespace MusicBroadcast.Youtube;
+
+public class YoutubeData
 {
-    public required string AudioUrl { get; set; }
+    public string AudioUrl { get; }
 
-    public required string Title { get; set; }
+    public string Title { get; }
 
-    public required string Url { get; set; }
+    public string Url { get; }
 
-    public TimeSpan? Duration { get; set; }
+    public TimeSpan? Duration { get; }
+
+    public YoutubeData(VideoData videoData)
+    {
+        var formatData = videoData.Formats.FirstOrDefault(
+            data => data.FormatId == "140",
+            defaultValue: videoData.Formats[0]);
+
+        AudioUrl = formatData.Url;
+        Title = videoData.Title;
+        Url = videoData.WebpageUrl;
+        Duration = videoData.Duration == null ? null : TimeSpan.FromSeconds((double)videoData.Duration);
+    }
 }

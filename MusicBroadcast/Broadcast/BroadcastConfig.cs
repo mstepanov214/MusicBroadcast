@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace MusicBroadcast;
+namespace MusicBroadcast.Broadcast;
 
-internal class BroadcastConfig : IBroadcastConfig
+public class BroadcastConfig : IBroadcastConfig
 {
     public required string OutputUrl { get; init; }
 

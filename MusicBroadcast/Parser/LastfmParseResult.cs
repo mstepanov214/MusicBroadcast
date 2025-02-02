@@ -1,6 +1,6 @@
 ﻿namespace MusicBroadcast.Parser;
 
-internal class LastfmParseResult
+public class LastfmParseResult
 {
     public required IEnumerable<string> Urls { get; set; }
 

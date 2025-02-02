@@ -2,7 +2,7 @@
 
 namespace MusicBroadcast.Extensions;
 
-static class Extensions
+public static class Extensions
 {
     public static bool IsAscii(this string str)
     {

@@ -1,6 +1,6 @@
-﻿namespace MusicBroadcast;
+﻿namespace MusicBroadcast.Broadcast;
 
-interface IBroadcastConfig
+public interface IBroadcastConfig
 {
     /// <summary>
     /// Stream output url

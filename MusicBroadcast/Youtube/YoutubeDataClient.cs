@@ -1,28 +1,24 @@
-﻿using MusicBroadcast.Extensions;
-
-using YoutubeDLSharp;
+﻿using YoutubeDLSharp;
 using YoutubeDLSharp.Metadata;
 using YoutubeDLSharp.Options;
 
 namespace MusicBroadcast.Youtube;
 
-internal static class YoutubeDataClient
+public static class YoutubeDataClient
 {
     static readonly YoutubeDL _ytdl = new();
-    private const string _cookiesPath = "cookies.txt";
 
     public static async Task<YoutubeData> GetYoutubeData(string url, CancellationToken ct = default)
     {
-        if (!File.Exists(_cookiesPath))
-        {
-            throw new FileNotFoundException("YouTube cookies file was not found.", _cookiesPath);
-        }
-
         var options = new OptionSet()
         {
-            ExtractorArgs = "youtube:skip=dash",
-            Cookies = _cookiesPath
+            ExtractorArgs = "youtube:skip=dash"
         };
+
+        if (File.Exists(FilePaths.YoutubeCookies))
+        {
+            options.Cookies = FilePaths.YoutubeCookies;
+        }
 
         var videoDataFetch = await _ytdl.RunVideoDataFetch(url, ct, overrideOptions: options);
 
@@ -37,7 +33,7 @@ internal static class YoutubeDataClient
             throw new YoutubeCopyrightException(url);
         }
 
-        return CreateYoutubeData(videoDataFetch.Data);
+        return new YoutubeData(videoDataFetch.Data);
     }
 
     private static bool IsCopyrighted(VideoData data)
@@ -53,20 +49,5 @@ internal static class YoutubeDataClient
             ..data.Tags
         ];
         return fields.Any(field => field?.Contains("vevo", StringComparison.OrdinalIgnoreCase) ?? false);
-    }
-
-    private static YoutubeData CreateYoutubeData(VideoData videoData)
-    {
-        var formatData = videoData.Formats.FirstOrDefault(
-            data => data.FormatId == "140",
-            defaultValue: videoData.Formats[0]);
-
-        return new YoutubeData()
-        {
-            AudioUrl = formatData.Url,
-            Title = videoData.Title,
-            Url = videoData.WebpageUrl,
-            Duration = videoData.Duration == null ? null : TimeSpan.FromSeconds((double)videoData.Duration)
-        };
     }
 }

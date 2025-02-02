@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using MusicBroadcast;
+using MusicBroadcast.Broadcast;
 
 CancellationTokenSource source = new();
 
@@ -12,7 +13,7 @@ Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs args) =>
 
 try
 {
-    var broadcast = ServiceRegistry.Provider.GetRequiredService<Broadcast>();
+    var broadcast = ServiceRegistry.Provider.GetRequiredService<AudioBroadcast>();
 
     await broadcast.Start(source.Token);
 }

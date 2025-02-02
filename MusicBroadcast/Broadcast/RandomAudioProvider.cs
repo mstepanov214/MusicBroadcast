@@ -2,9 +2,9 @@
 using MusicBroadcast.Parser;
 using MusicBroadcast.Youtube;
 
-namespace MusicBroadcast;
+namespace MusicBroadcast.Broadcast;
 
-internal class RandomAudioProvider : IAudioProvider
+public class RandomAudioProvider : IAudioProvider
 {
     private readonly IBroadcastConfig _config;
     private readonly IParser<LastfmParseResult> _parser;
@@ -16,14 +16,15 @@ internal class RandomAudioProvider : IAudioProvider
         _parser = parser;
     }
 
-    public async IAsyncEnumerable<string> GetDataAsync()
+    public async IAsyncEnumerable<Audio> GetDataAsync()
     {
         while (true)
         {
             var youtubeData = await FetchValidYoutubeData();
-            Console.WriteLine($"{youtubeData.Title} ({youtubeData.Url})");
+            string description = $"{youtubeData.Title} ({youtubeData.Url})";
+            var audio = new Audio(youtubeData.AudioUrl, description);
 
-            yield return youtubeData.AudioUrl;
+            yield return audio;
         }
     }
 

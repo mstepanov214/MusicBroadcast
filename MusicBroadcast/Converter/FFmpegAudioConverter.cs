@@ -3,9 +3,10 @@ using Xabe.FFmpeg.Events;
 
 namespace MusicBroadcast.Converter;
 
-internal class FFmpegAudioConverter : IConverter
+public class FFmpegAudioConverter : IConverter
 {
     private readonly StartupOptions _startupOptions;
+    private const int _maxRate = 6800;
 
     public FFmpegAudioConverter(StartupOptions startupOptions)
     {
@@ -14,23 +15,17 @@ internal class FFmpegAudioConverter : IConverter
 
     public async Task Convert(string input, string output, CancellationToken ct)
     {
-        var conversion = FFmpeg.Conversions.New().AddParameter("-hide_banner").AddParameter("-re");
-
-        if (File.Exists("bg.jpg"))
+        if (!File.Exists(FilePaths.BackgroundImage))
         {
-            conversion
-                .AddParameter("-loop 1")
-                .AddParameter("-f image2")
-                .AddParameter("-i bg.jpg");
-        }
-        else
-        {
-            conversion
-                .AddParameter("-f lavfi")
-                .AddParameter("-i color=size=1920x1080:rate=1:color=black");
+            throw new FileNotFoundException("Background image file was not found", FilePaths.BackgroundImage);
         }
 
-        conversion
+        var conversion = FFmpeg.Conversions.New()
+            .AddParameter("-hide_banner")
+            .AddParameter("-stream_loop -1")
+            .AddParameter("-re")
+            .AddParameter("-f image2")
+            .AddParameter($"-i {FilePaths.BackgroundImage}")
             .AddParameter("-reconnect 1")
             .AddParameter("-reconnect_streamed 1")
             .AddParameter("-reconnect_delay_max 5")
@@ -43,15 +38,19 @@ internal class FFmpegAudioConverter : IConverter
             .AddParameter("-b:a 128k")
             .AddParameter("-c:v libx264")
             .AddParameter("-s:v 1920x1080")
-            .AddParameter("-framerate 1")
-            .AddParameter("-g 2")
-            .AddParameter("-pix_fmt yuvj420p")
+            //.AddParameter("-framerate 30")
+            .AddParameter("-r 30")
+            .AddParameter("-g 60")
+            //.AddParameter("-pix_fmt yuvj420p")
+            .AddParameter("-pix_fmt yuv420p")
             .AddParameter("-tune stillimage")
             .AddParameter("-preset ultrafast")
+            .AddParameter("-crf 23")
             .AddParameter("-profile:v main")
-            .AddParameter("-b:v 0")
-            .AddParameter("-maxrate 4500k")
-            .AddParameter("-bufsize 9000k")
+            .AddParameter("-b:v 2500k")
+            .AddParameter($"-maxrate {_maxRate}k")
+            .AddParameter($"-bufsize {_maxRate * 2}k")
+            .AddParameter("-threads 6 -qscale 3")
             .AddParameter("-flvflags +no_duration_filesize+no_sequence_end")
             .AddParameter("-shortest")
             .AddParameter($"-f flv {output}");
@@ -61,11 +60,6 @@ internal class FFmpegAudioConverter : IConverter
             conversion.OnProgress += OnConversionProgress;
         }
 
-        //conversion.OnDataReceived += (sender, args) =>
-        //{
-        //    Console.WriteLine(args.Data);
-        //};
-
         try
         {
             await conversion.Start(ct);
@@ -73,7 +67,7 @@ internal class FFmpegAudioConverter : IConverter
         catch (Xabe.FFmpeg.Exceptions.ConversionException e)
         {
             Console.WriteLine(e.InputParameters);
-            throw new BroadcastException(e);
+            throw new ConverterException(e);
         }
     }
 

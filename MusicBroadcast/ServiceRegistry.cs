@@ -1,14 +1,14 @@
-﻿
-using CommandLine;
+﻿using CommandLine;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using MusicBroadcast.Broadcast;
 using MusicBroadcast.Converter;
 using MusicBroadcast.Parser;
 
 namespace MusicBroadcast;
 
-static class ServiceRegistry
+public static class ServiceRegistry
 {
     public static IServiceProvider Provider { get; }
 
@@ -17,11 +17,11 @@ static class ServiceRegistry
         var serviceCollection = new ServiceCollection();
 
         serviceCollection.AddSingleton(ParseStartupOptions());
-        serviceCollection.AddSingleton<IBroadcastConfig>(BroadcastConfig.FromYaml("config.yaml"));
+        serviceCollection.AddSingleton<IBroadcastConfig>(BroadcastConfig.FromYaml(FilePaths.Config));
         serviceCollection.AddScoped<IParser<LastfmParseResult>, LastfmParser>();
         serviceCollection.AddSingleton<IAudioProvider, RandomAudioProvider>();
         serviceCollection.AddSingleton<IConverter, FFmpegAudioConverter>();
-        serviceCollection.AddSingleton<Broadcast>();
+        serviceCollection.AddSingleton<AudioBroadcast>();
 
         Provider = serviceCollection.BuildServiceProvider();
     }

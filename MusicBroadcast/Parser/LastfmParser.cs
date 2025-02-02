@@ -9,7 +9,7 @@ using RandomUserAgent;
 
 namespace MusicBroadcast.Parser;
 
-internal class LastfmParser : IParser<LastfmParseResult>
+public class LastfmParser : IParser<LastfmParseResult>
 {
     private readonly IBrowsingContext _browsingContext;
 

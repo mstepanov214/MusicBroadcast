@@ -2,7 +2,7 @@
 
 namespace MusicBroadcast;
 
-class StartupOptions
+public class StartupOptions
 {
     [Option(
         "hide-progress",
