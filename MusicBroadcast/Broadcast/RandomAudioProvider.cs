@@ -1,4 +1,5 @@
 ﻿using MusicBroadcast.Extensions;
+using MusicBroadcast.Helpers;
 using MusicBroadcast.Parser;
 using MusicBroadcast.Youtube;
 
@@ -18,32 +19,16 @@ public class RandomAudioProvider : IAudioProvider
 
     public async IAsyncEnumerable<Audio> GetDataAsync()
     {
+        var retryExecutor = new RetryExecutor(10).OnRetry(Console.WriteLine);
+
         while (true)
         {
-            var youtubeData = await FetchValidYoutubeData();
+            var youtubeData = await retryExecutor.ExecuteAsync(GetRandomTrackYoutubeData);
             string description = $"{youtubeData.Title} ({youtubeData.Url})";
             var audio = new Audio(youtubeData.AudioUrl, description);
 
             yield return audio;
         }
-    }
-
-    private async Task<YoutubeData> FetchValidYoutubeData()
-    {
-        YoutubeData? youtubeData = null;
-        do
-        {
-            try
-            {
-                youtubeData = await GetRandomTrackYoutubeData();
-            }
-            catch (YoutubeException e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-        } while (youtubeData == null);
-
-        return youtubeData;
     }
 
     private async Task<YoutubeData> GetRandomTrackYoutubeData()
