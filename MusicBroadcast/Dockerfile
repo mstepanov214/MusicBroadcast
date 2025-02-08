@@ -30,4 +30,4 @@ USER dotnetuser
 WORKDIR /app
 COPY --from=build /out .
 
-ENTRYPOINT ["./MusicBroadcast", "--hide-progress"]
+ENTRYPOINT ["./MusicBroadcast"]

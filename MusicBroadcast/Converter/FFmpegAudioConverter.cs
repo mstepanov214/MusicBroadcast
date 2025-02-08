@@ -5,13 +5,7 @@ namespace MusicBroadcast.Converter;
 
 public class FFmpegAudioConverter : IConverter
 {
-    private readonly StartupOptions _startupOptions;
     private const int _maxRate = 6800;
-
-    public FFmpegAudioConverter(StartupOptions startupOptions)
-    {
-        _startupOptions = startupOptions;
-    }
 
     public async Task Convert(string input, string output, CancellationToken ct)
     {
@@ -55,10 +49,9 @@ public class FFmpegAudioConverter : IConverter
             .AddParameter("-shortest")
             .AddParameter($"-f flv {output}");
 
-        if (!_startupOptions.HideProgress)
-        {
-            conversion.OnProgress += OnConversionProgress;
-        }
+#if DEBUG
+        conversion.OnProgress += OnConversionProgress;
+#endif
 
         try
         {

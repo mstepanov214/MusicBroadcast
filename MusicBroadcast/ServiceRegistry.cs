@@ -1,6 +1,4 @@
-﻿using CommandLine;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 using MusicBroadcast.Broadcast;
 using MusicBroadcast.Converter;
@@ -16,7 +14,6 @@ public static class ServiceRegistry
     {
         var serviceCollection = new ServiceCollection();
 
-        serviceCollection.AddSingleton(ParseStartupOptions());
         serviceCollection.AddSingleton<IBroadcastConfig>(BroadcastConfig.FromYaml(FilePaths.Config));
         serviceCollection.AddScoped<IParser<LastfmParseResult>, LastfmParser>();
         serviceCollection.AddSingleton<IAudioProvider, RandomAudioProvider>();
@@ -24,14 +21,5 @@ public static class ServiceRegistry
         serviceCollection.AddSingleton<AudioBroadcast>();
 
         Provider = serviceCollection.BuildServiceProvider();
-    }
-
-    private static StartupOptions ParseStartupOptions()
-    {
-        var args = Environment.GetCommandLineArgs().Skip(1);
-        return CommandLine.Parser.Default
-            .ParseArguments<StartupOptions>(args)
-            .WithNotParsed(_ => System.Environment.Exit(1))
-            .Value;
     }
 }
