@@ -22,4 +22,4 @@ music-broadcast
 | --------------| ------------------------------------------------------------|
 | `config.yaml` | Main configuration file for the MusicBroadcast application. Copy and modify the [sample template](https://github.com/mstepanov214/MusicBroadcast/blob/main/MusicBroadcast/config.sample.yaml) to suit your needs. |
 | `bg.jpg`      | Background image used for the broadcast's visual interface. |
-| `cookies.txt` | YouTube cookies file used for authentication (to bypass _"Sign in to confirm you’re not a bot"_ error). <br> See  [How do I pass cookies to yt-dlp?](https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) and [Exporting YouTube cookies](https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies). |
+| `cookies.txt` | YouTube cookies file used for authentication (to bypass _"Sign in to confirm you’re not a bot"_ error). See [How do I pass cookies to yt-dlp?](https://github.com/yt-dlp/yt-dlp/wiki/FAQ#how-do-i-pass-cookies-to-yt-dlp) and [Exporting YouTube cookies](https://github.com/yt-dlp/yt-dlp/wiki/Extractors#exporting-youtube-cookies). |
