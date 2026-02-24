@@ -15,10 +15,10 @@ public static class YoutubeDataClient
             ExtractorArgs = "youtube:skip=dash"
         };
 
-        if (File.Exists(FilePaths.YoutubeCookies))
-        {
-            options.Cookies = FilePaths.YoutubeCookies;
-        }
+        //if (File.Exists(FilePaths.YoutubeCookies))
+        //{
+        //    options.Cookies = FilePaths.YoutubeCookies;
+        //}
 
         var videoDataFetch = await _ytdl.RunVideoDataFetch(url, ct, overrideOptions: options);
 
@@ -48,6 +48,8 @@ public static class YoutubeDataClient
             data.Description,
             ..data.Tags
         ];
-        return fields.Any(field => field?.Contains("vevo", StringComparison.OrdinalIgnoreCase) ?? false);
+
+        return fields.Any(field =>
+            field?.Contains("vevo", StringComparison.OrdinalIgnoreCase) ?? false);
     }
 }

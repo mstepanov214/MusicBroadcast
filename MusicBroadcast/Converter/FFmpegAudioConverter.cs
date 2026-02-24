@@ -1,4 +1,6 @@
-﻿using Xabe.FFmpeg;
+﻿using MusicBroadcast.Extensions;
+
+using Xabe.FFmpeg;
 using Xabe.FFmpeg.Events;
 
 namespace MusicBroadcast.Converter;
@@ -9,10 +11,7 @@ public class FFmpegAudioConverter : IConverter
 
     public async Task Convert(string input, string output, CancellationToken ct)
     {
-        if (!File.Exists(FilePaths.BackgroundImage))
-        {
-            throw new FileNotFoundException("Background image file was not found", FilePaths.BackgroundImage);
-        }
+        FileNotFoundException.ThrowIfNotExists(FilePaths.BackgroundImage);
 
         var conversion = FFmpeg.Conversions.New()
             .AddParameter("-hide_banner")
@@ -57,25 +56,17 @@ public class FFmpegAudioConverter : IConverter
         {
             await conversion.Start(ct);
         }
-        catch (Xabe.FFmpeg.Exceptions.ConversionException e)
+        catch (Xabe.FFmpeg.Exceptions.ConversionException ex)
         {
-            Console.WriteLine(e.InputParameters);
-            throw new ConverterException(e);
+            string message = $"Input parameters: {ex.InputParameters}";
+            throw new ConverterException(message, ex);
         }
     }
 
     private static void OnConversionProgress(object sender, ConversionProgressEventArgs args)
     {
-        ClearCurrentConsoleLine();
+        Console.ClearCurrentLine();
         Console.WriteLine($"[{args.Duration} / {args.TotalLength}] {args.Percent}%");
         Console.SetCursorPosition(0, Console.CursorTop - 1);
-    }
-
-    private static void ClearCurrentConsoleLine()
-    {
-        int currentLineCursor = Console.CursorTop;
-        Console.SetCursorPosition(0, Console.CursorTop);
-        Console.Write(new string(' ', Console.WindowWidth));
-        Console.SetCursorPosition(0, currentLineCursor);
     }
 }

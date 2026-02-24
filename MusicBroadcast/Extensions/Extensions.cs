@@ -4,27 +4,56 @@ namespace MusicBroadcast.Extensions;
 
 public static class Extensions
 {
-    public static bool IsAscii(this string str)
+    extension(string str)
     {
-        return str.All(c => c >= ' ' && c <= '~');
-    }
-
-    public static T GetRandomElement<T>(this IEnumerable<T> enumerable)
-    {
-        if (!enumerable.Any())
+        public bool IsAscii()
         {
-            throw new InvalidOperationException("Sequence contains no elements");
+            return str.All(c => c >= ' ' && c <= '~');
         }
-        return enumerable.ElementAt(new Random().Next(enumerable.Count()));
     }
 
-    public static Uri AddParameter(this Uri url, string paramName, string paramValue)
+    extension<T>(IEnumerable<T> enumerable)
     {
-        var uriBuilder = new UriBuilder(url);
-        var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-        query[paramName] = paramValue;
-        uriBuilder.Query = query.ToString();
+        public T GetRandomElement()
+        {
+            int count = enumerable.Count();
+            ArgumentOutOfRangeException.ThrowIfZero(count);
+            return enumerable.ElementAt(new Random().Next(count));
+        }
+    }
 
-        return uriBuilder.Uri;
+    extension(Uri url)
+    {
+        public Uri AddParameter(string paramName, string paramValue)
+        {
+            var uriBuilder = new UriBuilder(url);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query[paramName] = paramValue;
+            uriBuilder.Query = query.ToString();
+
+            return uriBuilder.Uri;
+        }
+    }
+
+    extension(Console)
+    {
+        public static void ClearCurrentLine()
+        {
+            int currentLineCursor = Console.CursorTop;
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, currentLineCursor);
+        }
+    }
+
+    extension(FileNotFoundException)
+    {
+        public static void ThrowIfNotExists(string path)
+        {
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException($"{path} : file not found", Path.GetFileName(path));
+            }
+        }
     }
 }

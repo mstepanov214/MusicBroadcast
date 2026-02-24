@@ -6,21 +6,21 @@ public class AudioBroadcast
 {
     private readonly IBroadcastConfig _config;
     private readonly IConverter _converter;
-    private readonly IAudioProvider _randomAudioProvider;
+    private readonly IAudioProvider _audioProvider;
     private const int _maxFailCount = 5;
 
-    public AudioBroadcast(IBroadcastConfig config, IConverter converter, IAudioProvider randomAudioProvider)
+    public AudioBroadcast(IBroadcastConfig config, IConverter converter, IAudioProvider audioProvider)
     {
         _config = config;
         _converter = converter;
-        _randomAudioProvider = randomAudioProvider;
+        _audioProvider = audioProvider;
     }
 
     public async Task Start(CancellationToken ct = default)
     {
         int fails = 0;
 
-        await foreach (var audio in _randomAudioProvider.GetDataAsync())
+        await foreach (var audio in _audioProvider.GetDataAsync())
         {
             try
             {

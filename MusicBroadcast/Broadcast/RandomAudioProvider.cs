@@ -19,16 +19,27 @@ public class RandomAudioProvider : IAudioProvider
 
     public async IAsyncEnumerable<Audio> GetDataAsync()
     {
-        var retryExecutor = new RetryExecutor(10).OnRetry(Console.WriteLine);
+        var nextAudio = GetAudioAsync();
 
         while (true)
         {
-            var youtubeData = await retryExecutor.ExecuteAsync(GetRandomTrackYoutubeData);
-            string description = $"{youtubeData.Title} ({youtubeData.Url})";
-            var audio = new Audio(youtubeData.AudioUrl, description);
+            var currentAudio = await nextAudio;
 
-            yield return audio;
+            nextAudio = GetAudioAsync();
+
+            yield return currentAudio;
         }
+    }
+
+    private async Task<Audio> GetAudioAsync()
+    {
+        var retryExecutor = new RetryExecutor(10).OnRetry(Console.WriteLine);
+
+        var youtubeData = await retryExecutor.ExecuteAsync(GetRandomTrackYoutubeData);
+        string description = $"{youtubeData.Title} ({youtubeData.Url})";
+        var audio = new Audio(youtubeData.AudioUrl, description);
+
+        return audio;
     }
 
     private async Task<YoutubeData> GetRandomTrackYoutubeData()
@@ -45,12 +56,8 @@ public class RandomAudioProvider : IAudioProvider
     private string GetTracksUrl()
     {
         var uri = new Uri(_config.TracksUrl);
-        if (!uri.IsWellFormedOriginalString())
-        {
-            throw new ArgumentException($"TracksUrl is not valid: {_config.TracksUrl}");
-        }
-
         int pageNumber = new Random().Next(1, _pagesTotal + 1);
+
         return uri.AddParameter("page", pageNumber.ToString()).ToString();
     }
 }

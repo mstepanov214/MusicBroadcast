@@ -5,7 +5,9 @@ using MusicBroadcast.Broadcast;
 
 CancellationTokenSource source = new();
 
-Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs args) =>
+Console.CursorVisible = false;
+
+Console.CancelKeyPress += (sender, args) =>
 {
     source.Cancel();
     Thread.Sleep(750);

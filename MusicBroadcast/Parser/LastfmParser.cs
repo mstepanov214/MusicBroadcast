@@ -21,20 +21,36 @@ public class LastfmParser : IParser<LastfmParseResult>
         requester.Headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8";
         requester.Headers["Referer"] = "https://www.last.fm";
 
-        var loaderOptions = new LoaderOptions
-        {
-            IsResourceLoadingEnabled = true
-        };
-        _browsingContext = BrowsingContext.New(Configuration.Default.With(requester).WithDefaultLoader(loaderOptions));
+        var browsingConfiguration = Configuration.Default
+            .With(requester)
+            .WithDefaultLoader(new() { IsResourceLoadingEnabled = true });
+
+        _browsingContext = BrowsingContext.New(browsingConfiguration);
     }
 
     public async Task<LastfmParseResult> Parse(string address)
+    {
+        try
+        {
+            var result = await ParseLastfmTag(address);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            throw new ParserException(ex);
+        }
+    }
+
+    private async Task<LastfmParseResult> ParseLastfmTag(string address)
     {
         var document = await _browsingContext.OpenAsync(address);
 
         await document.WaitForReadyAsync();
 
-        string pagesTotal = document.QuerySelectorAll(".pagination-page").Last().Text().Trim();
+        CheckResponseStatusCode(document);
+
+        int pagesTotal = GetTotalPagesNumber(document);
 
         var rows = document.QuerySelectorAll("tr.chartlist-row");
 
@@ -58,7 +74,27 @@ public class LastfmParser : IParser<LastfmParseResult>
         return new LastfmParseResult()
         {
             Urls = youtubeUrls,
-            PagesTotal = int.Parse(pagesTotal)
+            PagesTotal = pagesTotal
         };
+    }
+
+    private static int GetTotalPagesNumber(IDocument document)
+    {
+        var paginationButtons = document.QuerySelectorAll(".pagination-page");
+        int count = paginationButtons.Length;
+
+        return count == 0
+            ? 1
+            : int.Parse(paginationButtons[count - 1].Text().Trim());
+    }
+
+    private static void CheckResponseStatusCode(IDocument document)
+    {
+        var statusCode = document.StatusCode;
+
+        if (!new HttpResponseMessage(document.StatusCode).IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException($"Unsuccessful response status code: {statusCode}");
+        }
     }
 }
